@@ -21,15 +21,23 @@ WORKDIR /var/www/html
 
 COPY . .
 
+# Crear .env para el build (Railway sobreescribe con sus variables en runtime)
+RUN cp .env.example .env
+
 # Instalar dependencias PHP
 RUN composer install --no-dev --optimize-autoloader
+
+# Generar clave de app (Railway puede sobreescribir APP_KEY via env var)
+RUN php artisan key:generate --force
 
 # Instalar dependencias JS y compilar assets
 RUN npm ci && npm run build
 
-# Permisos
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Crear directorios necesarios y permisos
+RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 8000
 
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+CMD php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
