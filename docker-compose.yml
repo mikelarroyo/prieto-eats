@@ -1,0 +1,15 @@
+
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: prieto_eats_db
+    environment:
+      - POSTGRES_DB=prieto_eats
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
