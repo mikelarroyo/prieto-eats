@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_pgsql mbstring bcmath gd
 
 # Crear config OpenSSL personalizada con seguridad reducida para compatibilidad con PostgreSQL de Render
-RUN printf '[openssl_init]\nssl_conf=ssl_sect\n\n[ssl_sect]\nsystem_default=system_default_sect\n\n[system_default_sect]\nMinProtocol=TLSv1\nCipherString=DEFAULT@SECLEVEL=0\n' > /etc/ssl/openssl_custom.cnf
+RUN printf 'openssl_conf=openssl_init\n\n[openssl_init]\nssl_conf=ssl_sect\n\n[ssl_sect]\nsystem_default=system_default_sect\n\n[system_default_sect]\nMinProtocol=TLSv1\nCipherString=DEFAULT@SECLEVEL=0\n' > /etc/ssl/openssl_custom.cnf
 
 ENV OPENSSL_CONF=/etc/ssl/openssl_custom.cnf
 ENV PGGSSENCMODE=disable
