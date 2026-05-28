@@ -48,7 +48,7 @@ RUN mkdir -p storage/framework/sessions storage/framework/views storage/framewor
 
 EXPOSE 8000
 
-CMD sh -c "rm -f .env && php artisan config:clear && \
+CMD sh -c "rm -f .env && php artisan config:clear && php artisan storage:link --force 2>/dev/null || true && \
     for i in 1 2 3 4 5; do \
         php artisan migrate --force && break; \
         echo 'Reintentando migracion en 5s...' && sleep 5; \
