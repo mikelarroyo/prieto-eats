@@ -53,4 +53,5 @@ CMD sh -c "rm -f .env && php artisan config:clear && \
         php artisan migrate --force && break; \
         echo 'Reintentando migracion en 5s...' && sleep 5; \
     done && \
+    (php artisan db:seed --force 2>/dev/null || true) && \
     php artisan serve --host=0.0.0.0 --port=8000"
