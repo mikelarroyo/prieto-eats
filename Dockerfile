@@ -16,14 +16,11 @@ RUN apt-get update && apt-get install -y \
     && update-ca-certificates \
     && docker-php-ext-install pdo pdo_pgsql mbstring bcmath gd
 
-# Deshabilitar GSSAPI y bajar nivel de seguridad SSL para compatibilidad con PostgreSQL externo
+# Crear config OpenSSL personalizada con seguridad reducida para compatibilidad con PostgreSQL de Render
+RUN printf '[openssl_init]\nssl_conf=ssl_sect\n\n[ssl_sect]\nsystem_default=system_default_sect\n\n[system_default_sect]\nMinProtocol=TLSv1\nCipherString=DEFAULT@SECLEVEL=0\n' > /etc/ssl/openssl_custom.cnf
+
+ENV OPENSSL_CONF=/etc/ssl/openssl_custom.cnf
 ENV PGGSSENCMODE=disable
-RUN find /etc/ssl -name "openssl.cnf" -exec sed -i \
-    's/@SECLEVEL=2/@SECLEVEL=1/g; s/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' {} \; 2>/dev/null || true \
-    && echo "" >> /etc/ssl/openssl.cnf \
-    && echo "[system_default_sect]" >> /etc/ssl/openssl.cnf \
-    && echo "MinProtocol = TLSv1" >> /etc/ssl/openssl.cnf \
-    && echo "CipherString = DEFAULT@SECLEVEL=1" >> /etc/ssl/openssl.cnf
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
