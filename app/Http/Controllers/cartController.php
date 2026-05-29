@@ -31,14 +31,18 @@ class cartController extends Controller
         }
         $idsProductosOferta = array_unique($idsProductosOferta);
 
-        $ofertasPorId = Offer::whereIn('id', $idsOfertas)
-            ->get(['id', 'date_delivery', 'time_delivery'])
-            ->keyBy('id');
+        try {
+            $ofertasPorId = Offer::whereIn('id', $idsOfertas)
+                ->get(['id', 'date_delivery', 'time_delivery'])
+                ->keyBy('id');
 
-        $productosOfertaPorId = ProductOffer::with('product')
-            ->whereIn('id', $idsProductosOferta)
-            ->get()
-            ->keyBy('id');
+            $productosOfertaPorId = ProductOffer::with('product')
+                ->whereIn('id', $idsProductosOferta)
+                ->get()
+                ->keyBy('id');
+        } catch (\Exception) {
+            return redirect()->back()->withErrors(['error' => 'Error al cargar el carrito.']);
+        }
 
         return view('cart.show', compact('carrito', 'ofertasPorId', 'productosOfertaPorId'));
     }
