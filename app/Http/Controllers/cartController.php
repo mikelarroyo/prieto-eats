@@ -121,66 +121,6 @@ class cartController extends Controller
 
     public function cartOrder(Request $request)
     {
-        $carrito = session()->get('cart', []);
-
-        if (empty($carrito)) {
-            return redirect()->route('cartShow')->withErrors(['error' => 'El carrito está vacío.']);
-        }
-
-        $idsProductosOferta = [];
-        foreach ($carrito as $idOferta => $articulos) {
-            $idsProductosOferta = array_merge($idsProductosOferta, array_keys($articulos));
-        }
-
-        $productosOferta = ProductOffer::with('product')
-            ->whereIn('id', $idsProductosOferta)
-            ->get()
-            ->keyBy('id');
-
-        $total = 0;
-        $rows  = [];
-
-        foreach ($carrito as $idOferta => $articulos) {
-            foreach ($articulos as $idPO => $cantidad) {
-                if (!isset($productosOferta[$idPO])) continue;
-
-                $po = $productosOferta[$idPO];
-
-                if ($po->price) {
-                    $precio = $po->price;
-                } else {
-                    $precio = $po->product->price;
-                }
-
-                $total += $cantidad * $precio;
-
-                $rows[] = [
-                    'product_offer_id' => $po->id,
-                    'quantity'         => $cantidad,
-                ];
-            }
-        }
-
-        try {
-            DB::beginTransaction();
-
-            $order = Order::create([
-                'user_id' => auth()->id(),
-                'total'   => $total,
-            ]);
-
-            $order->products()->createMany($rows);
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('cartShow')->withErrors(['error' => 'Error al realizar el pedido.']);
-        }
-
-        $orderId = $order->id;
-
-        session()->forget('cart');
-
-        return redirect()->route('ordersShow')->with('info', "Pedido realizado correctamente (ID: $orderId).");
+        $carrito
     }
 }
