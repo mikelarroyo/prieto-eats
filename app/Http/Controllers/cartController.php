@@ -121,6 +121,6 @@ class cartController extends Controller
 
     public function cartOrder(Request $request)
     {
-        $carrito
+       
     }
 }
