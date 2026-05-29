@@ -1,7 +1,5 @@
 @extends('layouts.plantilla')
 
-
-
 @section('content')
 
     <h2>Carrito</h2>
