@@ -1,37 +1,52 @@
 @extends('layouts.plantilla')
 
 @section('content')
-<div class="container mt-4">
 
-    <h2 class="mb-3 text-center">Nuestras ofertas</h2>
+{{-- Hero --}}
+<section class="pe-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>Comida fresca,<br><em>lista para recoger</em></h1>
+                <p>Elige tu menú del día y pasa a recogerlo. Sencillo y rápido.</p>
+            </div>
+            <div class="col-md-4 d-none d-md-block pe-hero-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container py-4">
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
+        <div class="alert alert-success alert-dismissible fade show fade-in" role="alert">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
-
     @if(session('info'))
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            {{ session('info') }}
+        <div class="alert alert-info alert-dismissible fade show fade-in" role="alert">
+            <i class="fas fa-info-circle me-2"></i>{{ session('info') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
     @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
+        <div class="alert alert-danger alert-dismissible fade show fade-in" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if($offers->isEmpty())
-        <div class="alert alert-info">
-            No hay ofertas disponibles ahora mismo.
+        <div class="text-center py-5">
+            <div style="font-size:3.5rem; opacity:.25; margin-bottom:16px;"><i class="fas fa-store-slash"></i></div>
+            <h5 style="color:var(--pe-muted);">No hay ofertas disponibles en este momento.</h5>
+            <p style="color:#bbb; font-size:.9rem;">Vuelve pronto para ver las próximas.</p>
         </div>
     @else
 
-        {{-- NAV TABS: una tab por oferta, etiqueta = fecha --}}
+        {{-- Tabs --}}
         <ul class="nav nav-tabs" id="offersTabs" role="tablist">
             @foreach($offers as $index => $offer)
                 <li class="nav-item" role="presentation">
@@ -40,75 +55,38 @@
                             data-bs-toggle="tab"
                             data-bs-target="#offer-{{ $offer->id }}"
                             type="button" role="tab">
+                        <i class="fas fa-calendar-day me-1" style="font-size:.8rem;"></i>
                         {{ $offer->date_delivery->locale('es')->isoFormat('D [de] MMMM') }}
                     </button>
                 </li>
             @endforeach
         </ul>
 
-        {{-- TAB CONTENT --}}
-        <div class="tab-content border border-top-0 p-3" id="offersTabsContent">
+        <div class="tab-content border border-top-0 p-4" id="offersTabsContent">
             @foreach($offers as $index => $offer)
                 <div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}"
                      id="offer-{{ $offer->id }}"
                      role="tabpanel">
 
-                    <div class="mb-3 text-muted small">
-                        Recogida a las {{ $offer->time_delivery }}
+                    <div class="pe-offer-meta">
+                        <span><i class="fas fa-clock me-1"></i> Recogida a las <strong>{{ $offer->time_delivery }}</strong></span>
                         @if($offer->datetime_limit)
-                            &nbsp;·&nbsp;
-                            <span class="text-danger">
-                                Límite de pedido: {{ \Carbon\Carbon::parse($offer->datetime_limit)->locale('es')->isoFormat('D [de] MMMM [a las] H:mm') }}
+                            <span class="deadline">
+                                <i class="fas fa-hourglass-half me-1"></i>
+                                Límite: {{ \Carbon\Carbon::parse($offer->datetime_limit)->locale('es')->isoFormat('D [de] MMMM [a las] H:mm') }}
                             </span>
                         @endif
                     </div>
 
                     @if($offer->productsOffer->isEmpty())
                         <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
                             Esta oferta no tiene productos asignados.
                         </div>
                     @else
-                        <div class="row">
+                        <div class="row g-3">
                             @foreach($offer->productsOffer as $po)
-                                @php
-                                    $p = $po->product;
-                                    $precio = $po->price ?? $p->price ?? 0;
-                                @endphp
-
-                                <div class="col-md-4 mb-3">
-                                    <div class="card h-100">
-                                        @if(!empty($p->image))
-                                            <img src="{{ asset($p->image) }}"
-                                                 class="card-img-top"
-                                                 alt="{{ $p->name }}"
-                                                 style="height:200px; object-fit:cover;">
-                                        @endif
-
-                                        <div class="card-body d-flex flex-column">
-                                            <h5 class="card-title">{{ $p->name }}</h5>
-
-                                            @if(!empty($p->description))
-                                                <p class="card-text text-muted small">{{ $p->description }}</p>
-                                            @endif
-
-                                            <div class="mt-auto">
-                                                <p class="fw-bold mb-2">Precio: {{ number_format($precio, 2) }} €</p>
-
-                                                @auth
-                                                    <form action="{{ route('cartAdd', $po->id) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-success btn-sm">
-                                                            Añadir al carrito
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <p class="text-danger">Inicia sesión para comprar</p>
-                                                @endauth
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                <x-product-card :po="$po" />
                             @endforeach
                         </div>
                     @endif
@@ -118,6 +96,5 @@
         </div>
 
     @endif
-
 </div>
 @endsection
