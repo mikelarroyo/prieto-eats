@@ -39,7 +39,7 @@
                     @foreach($offers as $o)
                         <tr>
                             <td style="color:var(--pe-muted); font-size:.82rem;">{{ $o->id }}</td>
-                            <td class="fw-600">{{ $o->date_delivery }}</td>
+                            <td class="fw-600">{{ $o->date_delivery->format('d/m/Y') }}</td>
                             <td style="color:var(--pe-muted);">{{ $o->time_delivery }}</td>
                             <td class="text-center">
                                 <span style="background:var(--pe-green-light); color:var(--pe-green-dark); border-radius:20px; padding:3px 12px; font-size:.82rem; font-weight:700;">
