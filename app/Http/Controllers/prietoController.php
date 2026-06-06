@@ -93,11 +93,15 @@ class PrietoController extends Controller
 
     public function ordersShow()
     {
-        $orders = Order::with("products.productOffer.product")
-            ->where("user_id", auth()->id())
-            ->orderBy("created_at", "desc")
-            ->get();
+        try {
+            $orders = Order::with("products.productOffer.product")
+                ->where("user_id", auth()->id())
+                ->orderBy("created_at", "desc")
+                ->paginate(5);
 
-        return view("orders.index", compact("orders"));
+            return view("orders.index", compact("orders"));
+        } catch (\Throwable $e) {
+            return response("ERROR en ordersShow: " . $e->getMessage() . " | File: " . $e->getFile() . " line " . $e->getLine(), 500);
+        }
     }
 }
