@@ -59,7 +59,7 @@
                                 @endphp
                                 <tr>
                                     <td>
-                                        <span class="fw-500">{{ $p->name }}</span>
+                                        <span class="fw-500">{{ $p?->name ?? '—' }}</span>
                                     </td>
                                     <td class="text-center" style="color:var(--pe-muted);">{{ number_format($price, 2) }} €</td>
                                     <td class="text-center">
