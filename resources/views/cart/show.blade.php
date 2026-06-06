@@ -62,15 +62,15 @@
                         </div>
 
                         @foreach($articulos as $idPO => $qty)
+                            @php $po = $productosOfertaPorId[$idPO] ?? null; @endphp
+
+                            @if($po)
                             @php
-                                $po        = $productosOfertaPorId[$idPO] ?? null;
                                 $prod      = $po->product;
                                 $lineTotal = $prod->price * (int) $qty;
                                 $subtotal     += $lineTotal;
                                 $totalGeneral += $lineTotal;
                             @endphp
-
-                            @if($po)
                                 <div class="pe-cart-row">
                                     {{-- Image --}}
                                     @if(!empty($prod->image))

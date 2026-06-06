@@ -53,8 +53,8 @@
                             @foreach($o->products as $l)
                                 @php
                                     $po    = $l->productOffer;
-                                    $p     = $po->product;
-                                    $price = $po->price ?? $p->price ?? 0;
+                                    $p     = $po?->product;
+                                    $price = $po && $p ? ($po->price ?? $p->price ?? 0) : 0;
                                     $sub   = $l->quantity * $price;
                                 @endphp
                                 <tr>
