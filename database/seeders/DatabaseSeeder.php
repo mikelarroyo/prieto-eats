@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
             OffersSeeder::class,
             OfferProductSeeder::class,
             UserSeeder::class,
-            WeekOffersSeeder::class,
             //OrdersSeeder::class,
             //Orders_itemsSeeder::class,
         ]);
