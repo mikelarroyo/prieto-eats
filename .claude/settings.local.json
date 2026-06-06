@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\mikel\\\\Desktop\\\\laravel\\\\proyecto05_Breeze_Blade\\\\routes\" -Filter \"*.php\" -ErrorAction SilentlyContinue)",
-      "Bash(Select-Object -ExpandProperty FullName)"
-    ]
-  }
-}
